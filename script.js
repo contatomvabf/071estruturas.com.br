@@ -760,92 +760,46 @@
         form.reportValidity();
         return;
       }
+
       var nome = String(form.nome.value || "").trim();
       var email = String(form.email.value || "").trim();
       var mensagem = String(form.mensagem.value || "").trim();
-      var turnstileToken = getTurnstileToken();
-      if (turnstileWidget) {
-        if (!turnstileToken) {
-          if (captchaRow) captchaRow.hidden = false;
-          if (!window.turnstile) {
-            setFormFeedback(
-              "error",
-              "Captcha indisponivel no momento. Recarregue a pagina."
-            );
-            return;
-          }
-          setFormFeedback(
-            "error",
-            "Confirme o captcha para concluir o envio e clique em ENVIAR novamente."
-          );
-          if (captchaRow && typeof captchaRow.scrollIntoView === "function") {
-            captchaRow.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-          return;
-        }
-      } else {
-        setFormFeedback(
-          "error",
-          "Captcha nao configurado no formulario. Entre em contato com o suporte."
-        );
-        return;
-      }
-      form.setAttribute("data-submitting", "1");
 
+      form.setAttribute("data-submitting", "1");
       var submitBtn = form.querySelector(".form-submit-contact");
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = "ENVIANDO...";
       }
 
-      var payload = {
-        nome: nome,
-        email: email,
-        mensagem: mensagem,
-        _subject: contactSubject,
-      };
-      if (turnstileToken) {
-        payload["cf-turnstile-response"] = turnstileToken;
-      }
-
-      fetch(contactEndpoint, {
+      fetch("https://formspree.io/f/SEU_ID_AQUI", {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ nome: nome, email: email, mensagem: mensagem })
       })
-        .then(function (res) {
-          if (!res.ok) throw new Error("Falha ao enviar");
-          return res.json().catch(function () {
-            return {};
-          });
-        })
-        .then(function () {
-          setFormFeedback(
-            "success",
-            "Mensagem enviada com sucesso. Em breve entraremos em contato."
-          );
-          form.reset();
-          if (window.turnstile && turnstileWidget) {
-            window.turnstile.reset(turnstileWidget);
-          }
-          if (captchaRow) captchaRow.hidden = true;
-        })
-        .catch(function () {
-          setFormFeedback(
-            "error",
-            "Nao foi possivel enviar agora. Tente novamente em instantes."
-          );
-        })
-        .finally(function () {
-          form.setAttribute("data-submitting", "0");
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "ENVIAR";
-          }
-        });
+      .then(function (res) {
+        if (!res.ok) throw new Error("Falha");
+        return res.json();
+      })
+      .then(function () {
+        setFormFeedback("success", "Mensagem enviada! Em breve entraremos em contato.");
+        form.reset();
+        var texto = "Olá! Meu nome é " + nome + " (" + email + ") e gostaria de um orçamento.\n\n" + mensagem;
+        window.open("https://wa.me/5571991435629?text=" + encodeURIComponent(texto), "_blank", "noopener,noreferrer");
+      })
+      .catch(function () {
+        setFormFeedback("error", "Não foi possível enviar agora. Tente novamente em instantes.");
+      })
+      .finally(function () {
+        form.setAttribute("data-submitting", "0");
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "ENVIAR";
+        }
+      });
     });
   }
 })();
