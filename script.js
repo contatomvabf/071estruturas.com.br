@@ -772,7 +772,7 @@
         submitBtn.textContent = "ENVIANDO...";
       }
 
-      fetch("https://formspree.io/f/xdabdzqa", {
+      fetch("https://formspree.io/f/SEU_ID_AQUI", {
         method: "POST",
         headers: {
           "Accept": "application/json",
@@ -785,10 +785,8 @@
         return res.json();
       })
       .then(function () {
-        setFormFeedback("success", "Mensagem enviada! Em breve entraremos em contato.");
+        setFormFeedback("success", "Mensagem enviada com sucesso! Em breve entraremos em contato.");
         form.reset();
-        var texto = "Olá! Meu nome é " + nome + " (" + email + ") e gostaria de um orçamento.\n\n" + mensagem;
-        window.open("https://wa.me/5571991435629?text=" + encodeURIComponent(texto), "_blank", "noopener,noreferrer");
       })
       .catch(function () {
         setFormFeedback("error", "Não foi possível enviar agora. Tente novamente em instantes.");
