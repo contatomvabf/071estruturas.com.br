@@ -772,7 +772,7 @@
         submitBtn.textContent = "ENVIANDO...";
       }
 
-      fetch("https://formspree.io/f/SEU_ID_AQUI", {
+      fetch("https://formspree.io/f/xdabdzqa", {
         method: "POST",
         headers: {
           "Accept": "application/json",
