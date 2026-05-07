@@ -2050,3 +2050,9 @@ strong {
   visibility: visible !important;
   opacity: 1 !important;
 }
+/* Esconde badge do reCAPTCHA */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
