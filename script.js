@@ -772,31 +772,41 @@
         submitBtn.textContent = "ENVIANDO...";
       }
 
-      fetch("https://formspree.io/f/xdabdzqa", {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ nome: nome, email: email, mensagem: mensagem })
-      })
-      .then(function (res) {
-        if (!res.ok) throw new Error("Falha");
-        return res.json();
-      })
-      .then(function () {
-        setFormFeedback("success", "Mensagem enviada com sucesso! Em breve entraremos em contato.");
-        form.reset();
-      })
-      .catch(function () {
-        setFormFeedback("error", "Não foi possível enviar agora. Tente novamente em instantes.");
-      })
-      .finally(function () {
-        form.setAttribute("data-submitting", "0");
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "ENVIAR";
-        }
+      grecaptcha.ready(function () {
+        grecaptcha.execute("6Ldi7N0sAAAAB4-reoBShIDNb6mCue37xQJSMlF", { action: "submit" })
+        .then(function (token) {
+          return fetch("https://formspree.io/f/xdabdzqa", {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              nome: nome,
+              email: email,
+              mensagem: mensagem,
+              "g-recaptcha-response": token
+            })
+          });
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error("Falha");
+          return res.json();
+        })
+        .then(function () {
+          setFormFeedback("success", "Mensagem enviada com sucesso! Em breve entraremos em contato.");
+          form.reset();
+        })
+        .catch(function () {
+          setFormFeedback("error", "Não foi possível enviar agora. Tente novamente em instantes.");
+        })
+        .finally(function () {
+          form.setAttribute("data-submitting", "0");
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "ENVIAR";
+          }
+        });
       });
     });
   }
