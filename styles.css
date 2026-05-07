@@ -2039,17 +2039,6 @@ strong {
     right: 1.75rem;
   }
 }
-/* Esconde o badge do reCAPTCHA por padrão */
-.grecaptcha-badge {
-  visibility: hidden !important;
-  opacity: 0 !important;
-}
-
-/* Mostra apenas quando a seção contatos está ativa */
-.show-recaptcha .grecaptcha-badge {
-  visibility: visible !important;
-  opacity: 1 !important;
-}
 /* Esconde badge do reCAPTCHA */
 .grecaptcha-badge {
   visibility: hidden !important;
