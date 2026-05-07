@@ -750,7 +750,20 @@
       });
     });
   })();
+(function initRecaptchaBadge() {
+    var contactSection = document.getElementById("contatos");
+    if (!contactSection) return;
 
+    function checkVisibility() {
+      var rect = contactSection.getBoundingClientRect();
+      var visible = rect.top < window.innerHeight && rect.bottom > 0;
+      document.body.classList.toggle("show-recaptcha", visible);
+    }
+
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    checkVisibility();
+  })();
+  
  if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
