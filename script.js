@@ -751,7 +751,7 @@
     });
   })();
 
-  if (form) {
+ if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       setFormFeedback("", "");
@@ -772,44 +772,28 @@
         submitBtn.textContent = "ENVIANDO...";
       }
 
-      function resetBtn() {
+      fetch("https://formspree.io/f/xdabdzqa", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ nome: nome, email: email, mensagem: mensagem })
+      })
+      .then(function (res) {
+        if (!res.ok) throw new Error("Falha");
+        return res.json();
+      })
+      .then(function () {
+        setFormFeedback("success", "Mensagem enviada com sucesso! Em breve entraremos em contato.");
+        form.reset();
         form.setAttribute("data-submitting", "0");
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "ENVIAR";
-        }
-      }
-
-      grecaptcha.ready(function () {
-        grecaptcha.execute("6Ldi7N0sAAAAAB4-reoB5hlDNb6mCue37xQJSMlF", { action: "submit" })
-        .then(function (token) {
-          return fetch("https://formspree.io/f/xdabdzqa", {
-            method: "POST",
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              nome: nome,
-              email: email,
-              mensagem: mensagem,
-              "g-recaptcha-response": token
-            })
-          });
-        })
-        .then(function (res) {
-          if (!res.ok) throw new Error("Falha");
-          return res.json();
-        })
-        .then(function () {
-          setFormFeedback("success", "Mensagem enviada com sucesso! Em breve entraremos em contato.");
-          form.reset();
-          resetBtn();
-        })
-        .catch(function () {
-          setFormFeedback("error", "Não foi possível enviar agora. Tente novamente em instantes.");
-          resetBtn();
-        });
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ENVIAR"; }
+      })
+      .catch(function () {
+        setFormFeedback("error", "Não foi possível enviar agora. Tente novamente em instantes.");
+        form.setAttribute("data-submitting", "0");
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ENVIAR"; }
       });
     });
   }
